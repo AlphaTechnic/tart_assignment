@@ -1,7 +1,7 @@
 from django.urls import path
 from .views import ListView, InfoView
 
-app_name = "fundings_app"
+app_name = "startup_fundings_app"
 
 urlpatterns = [
     path('v1/startups/', ListView.as_view(), name="startup_list"),

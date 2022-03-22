@@ -39,7 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     # add apps
-    'fundings_app',
+    'startup_fundings_app',
     'rest_framework'
 ]
 
