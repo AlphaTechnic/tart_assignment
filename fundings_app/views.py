@@ -50,7 +50,7 @@ class ListView(APIView):
 
         # platform 이 지정되지 않아서 모든 플랫폼을 불러오는 경우
         infos = []
-        for p in range(Platforms):
+        for p in Platforms:
             info = self.get_info(p, status)
             infos.append(info)
         merged_info = self.merge_info(infos)
@@ -62,7 +62,7 @@ class InfoView(APIView):
     def validate_request(self, platform):
         if platform is not None and platform not in Platforms:
             return False
-        if status is not None and status not in self.Status:
+        if status is not None and status not in Status:
             return False
         return True
 
