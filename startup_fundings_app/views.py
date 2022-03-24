@@ -2,16 +2,18 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 import response_msg
+from startup_fundings_app.crawler.crawler import WadizCrawler
+import startup_fundings_app.crawler.selector as sel
 
 Platforms = ['wadiz', 'ohmycompany']
 Status = ['scheduled', 'open', 'closed']
 
 
 class ListView(APIView):
-    # 공통정보 : 기업명, title, 투자액, 카테고리,
-
     def get_from_wadiz(self, status) -> list:
-        pass
+        uri = "https://www.wadiz.kr/web/winvest/startup"
+        crawler = WadizCrawler(uri, sel.wadiz_card_selector, sel.wadiz_company_selector, sel.wadiz_identifier_selector)
+        return crawler.crawl()
 
     def get_from_ohmycompany(self, status) -> list:
         pass

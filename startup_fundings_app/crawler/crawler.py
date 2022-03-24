@@ -111,6 +111,8 @@ class WadizCrawler(Crawler):
             ret.append(data)
         return ret
 
+class OhMyCompanyCrawler(Crawler):
+    pass
 
 if __name__ == "__main__":
     print("크롤링 시작")
