@@ -61,7 +61,7 @@ class Crawler(object):
         session._browser = browser
 
         resp = await session.get(uri)
-        await resp.html.arender(timeout=20)
+        await resp.html.arender(timeout=30)
         await session.close()
         return resp
 

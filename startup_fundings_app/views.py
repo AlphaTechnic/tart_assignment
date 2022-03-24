@@ -4,9 +4,11 @@ from rest_framework.views import APIView
 import response_msg
 from startup_fundings_app.crawler.crawler import WadizCrawler, OhMyCompanyCrawler
 import startup_fundings_app.crawler.selector as sel
+# import ray
 
 Platforms = ['wadiz', 'ohmycompany']
 Status = ['scheduled', 'open', 'closed']
+NumCPUs = 2
 
 
 class ListView(APIView):
@@ -20,6 +22,7 @@ class ListView(APIView):
         crawler = OhMyCompanyCrawler(uri, sel.ohmycompany_card_selector)
         return crawler.crawl()
 
+    #@ray.remote
     def get_info(self, platform, status) -> list:
         # platform에서 정보가져와서 가져옴
         if platform == 'wadiz':
@@ -49,6 +52,14 @@ class ListView(APIView):
             return Response(data=info)
 
         # platform 이 지정되지 않아서 모든 플랫폼을 불러오는 경우
+
+        # multiprocessing으로 ray를 사용하려 했으나 라이브러리 호환성 문제 ㅜ
+        # ray.init(num_cpus=NumCPUs)
+        # merged_info = []
+        # for platform in Platforms:
+        #     merged_info.extend(self.get_info.remote(platform, status))
+        # results = ray.get(merged_info)
+
         merged_info = []
         for platform in Platforms:
             merged_info.extend(self.get_info(platform, status))
@@ -57,6 +68,7 @@ class ListView(APIView):
 
 
 class InfoView(APIView):
+    # 미완성 ㅜ
     def validate_request(self, platform):
         if platform is not None and platform not in Platforms:
             return False
