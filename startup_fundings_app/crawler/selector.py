@@ -4,3 +4,4 @@ wadiz_company_selector = "p.ProjectCardInfo_maker__2EK-a"
 wadiz_identifier_selector = "a.CardLink_link__1k83H"
 
 # for ohmycompany
+ohmycompany_card_selector = "#listPrj > div"

@@ -2,7 +2,7 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 import response_msg
-from startup_fundings_app.crawler.crawler import WadizCrawler
+from startup_fundings_app.crawler.crawler import WadizCrawler, OhMyCompanyCrawler
 import startup_fundings_app.crawler.selector as sel
 
 Platforms = ['wadiz', 'ohmycompany']
@@ -13,10 +13,12 @@ class ListView(APIView):
     def get_from_wadiz(self, status) -> list:
         uri = "https://www.wadiz.kr/web/winvest/startup"
         crawler = WadizCrawler(uri, sel.wadiz_card_selector, sel.wadiz_company_selector, sel.wadiz_identifier_selector)
-        return crawler.crawl(uri)
+        return crawler.crawl()
 
     def get_from_ohmycompany(self, status) -> list:
-        pass
+        uri = "https://www.ohmycompany.com/invest/list"
+        crawler = OhMyCompanyCrawler(uri, sel.ohmycompany_card_selector)
+        return crawler.crawl()
 
     def get_info(self, platform, status) -> list:
         # platform에서 정보가져와서 가져옴
@@ -25,10 +27,6 @@ class ListView(APIView):
         if platform == 'ohmycompany':
             return self.get_from_ohmycompany(status)
         raise Exception("Something Wrong!")
-
-    def merge_info(self, info_list) -> list:
-        # platform1에서 온 list of dict, platform2에서 온 list of dict 합침
-        pass
 
     def validate_request(self, platform, status):
         if platform is not None and platform not in Platforms:
@@ -51,11 +49,9 @@ class ListView(APIView):
             return Response(data=info)
 
         # platform 이 지정되지 않아서 모든 플랫폼을 불러오는 경우
-        infos = []
-        for p in Platforms:
-            info = self.get_info(p, status)
-            infos.append(info)
-        merged_info = self.merge_info(infos)
+        merged_info = []
+        for platform in Platforms:
+            merged_info.extend(self.get_info(platform, status))
 
         return Response(merged_info)
 
