@@ -1,6 +1,6 @@
 from django.apps import AppConfig
 
 
-class StartuppAppConfig(AppConfig):
+class StartuppFundingsAppConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'startup_fundings_app'
+    name = 'startupp_fundings_app'
