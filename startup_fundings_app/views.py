@@ -13,7 +13,7 @@ class ListView(APIView):
     def get_from_wadiz(self, status) -> list:
         uri = "https://www.wadiz.kr/web/winvest/startup"
         crawler = WadizCrawler(uri, sel.wadiz_card_selector, sel.wadiz_company_selector, sel.wadiz_identifier_selector)
-        return crawler.crawl()
+        return crawler.crawl(uri)
 
     def get_from_ohmycompany(self, status) -> list:
         pass
@@ -48,7 +48,7 @@ class ListView(APIView):
         # platform 이 지정된 경우
         if platform is not None:
             info = self.get_info(platform, status)
-            return Response(info, status=status.HTTP_200_OK)
+            return Response(data=info)
 
         # platform 이 지정되지 않아서 모든 플랫폼을 불러오는 경우
         infos = []
@@ -57,7 +57,7 @@ class ListView(APIView):
             infos.append(info)
         merged_info = self.merge_info(infos)
 
-        return Response(merged_info, status=status.HTTP_200_OK)
+        return Response(merged_info)
 
 
 class InfoView(APIView):
