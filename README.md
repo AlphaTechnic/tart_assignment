@@ -104,4 +104,29 @@ def mk_result_using_multiprocessing(self):
   ![multiprocessing vs iterative](./_imgs_for_doc/multiprocessingVSiterative.png)
 
   - There was **no significant difference..** 😢
-  - Why? Something wrong..?
+  - ~~Why? Something wrong..?~~
+
+- **Troubleshooting**
+  - 문제 원인
+    - `ray.get()`을 연속적으로 for문을 통해서 호출을 한 것. 
+    - 이렇게 연속적으로 `ray.get()`을 호출하게 되면, **나중에 호출된 `ray.get()`은 앞서 호출된 `ray.get()`의 작업이 끝날때 까지 기다림!!**
+  - 해결
+    - `[FUNCTION].remote()`를 순차적으로 호출하는 것이고! `ray.get()`은 한 번만 호출!
+
+- **New Result**
+
+  - **Iterative Result**
+
+  ![multiprocessing vs iterative](./_imgs_for_doc/res_iter.png)
+
+  - **Multiprocessing Result**
+
+    ![multiprocessing vs iterative](./_imgs_for_doc/res_multi.png)
+
+  - **Chart**
+
+    ![multiprocessing vs iterative](./_imgs_for_doc/multiprocessingVSiterative2.png)
+
+    - There was **the significant difference!** 😄
+
+  
