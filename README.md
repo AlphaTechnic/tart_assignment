@@ -49,7 +49,7 @@
 ```
 
 ```shell
-(myvenv) ~/tart_assignment-deploy$ python manage.py runserver
+(myvenv) ~/tart_assignment$ python manage.py runserver
 ```
 
 
