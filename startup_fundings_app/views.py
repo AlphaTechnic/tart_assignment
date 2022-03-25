@@ -49,13 +49,14 @@ class ListView(APIView, StartupFundings):
 
     def mk_result_using_multiprocessing(self):
         start = time.time()
-        merged_info = []
-        for platform in self.Platforms:
-            merged_info.extend(ray.get(get_info_async.remote(ListView(), platform=platform, status=status)))
+        merged_info = [
+            get_info_async.remote(ListView(), platform=platform, status=status) for platform in self.Platforms
+        ]
+        objs = ray.get(merged_info)
         end = time.time()
-        print(f"실행 시간 : {end - start:.5f} sec", "!!!!!!!!!!!!!!!!!!!")
+        print(f"{end - start:.5f} sec", "!!!!!!!!!!!!!!!!!!!")
 
-        return merged_info
+        return sum(objs, [])
 
     def mk_result_iteratively(self):
         start = time.time()
@@ -82,10 +83,10 @@ class ListView(APIView, StartupFundings):
 
         # platform 이 지정되지 않아서 모든 플랫폼을 불러오는 경우
         # multiprocessing
-        return Response(self.mk_result_using_multiprocessing())
+        # return Response(self.mk_result_using_multiprocessing())
 
         # NO multiprocessing
-        # return Response(self.mk_result_iteratively())
+        return Response(self.mk_result_iteratively())
 
 
 class InfoView(APIView, StartupFundings):
