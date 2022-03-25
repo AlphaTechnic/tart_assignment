@@ -117,7 +117,7 @@ def mk_result_using_multiprocessing(self):
 
   - **Iterative Result**
 
-  ![multiprocessing vs iterative](./_imgs_for_doc/res_iter.png)
+    ![multiprocessing vs iterative](./_imgs_for_doc/res_iter.png)
 
   - **Multiprocessing Result**
 
