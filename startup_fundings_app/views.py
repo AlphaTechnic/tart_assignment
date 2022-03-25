@@ -18,11 +18,12 @@ def get_info_async(obj, platform, status=None) -> list:
     raise Exception("Something Wrong!")
 
 
-class ListView(APIView):
+class StartupFundings(object):
     Platforms = ['wadiz', 'ohmycompany']
     Status = ['scheduled', 'open', 'closed']
-    NumCPUs = 2
 
+
+class ListView(APIView, StartupFundings):
     def get_from_wadiz(self, status) -> list:
         uri = "https://www.wadiz.kr/web/winvest/startup"
         crawler = WadizCrawler(uri, sel.wadiz_card_selector, sel.wadiz_company_selector, sel.wadiz_identifier_selector)
@@ -88,17 +89,15 @@ class ListView(APIView):
 
         # platform 이 지정되지 않아서 모든 플랫폼을 불러오는 경우
         # multiprocessing
-        # return Response(self.mk_result_using_multiprocessing())
+        return Response(self.mk_result_using_multiprocessing())
 
         # NO multiprocessing
-        return Response(self.mk_result_iteratively())
+        # return Response(self.mk_result_iteratively())
 
 
-class InfoView(APIView):
-    Platforms = ['wadiz', 'ohmycompany']
-    Status = ['scheduled', 'open', 'closed']
-
-    # 미완성 ㅜ
+class InfoView(APIView, StartupFundings):
+    # make a skeleton code...
+    # not finished yet
 
     def validate_request(self, platform):
         if platform is not None and platform not in self.Platforms:
