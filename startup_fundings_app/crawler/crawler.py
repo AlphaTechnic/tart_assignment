@@ -112,12 +112,12 @@ class WadizCrawler(Crawler):
     def crawl(self, debug=False):
         if not debug:
             resp = asyncio.run(self.load_page_helper(self.uri))
-            resp.html.arender(timeout=15)
+            resp.html.arender(timeout=30)
         else:
             # debug mode
             session = HTMLSession()
             resp = session.get(self.uri)
-            resp.html.render(timeout=15)
+            resp.html.render(timeout=30)
 
         cards = resp.html.find(self.cards_selector)[0]
         raw_data1 = cards.find(self.company_selector)
@@ -206,12 +206,12 @@ class OhMyCompanyCrawler(Crawler):
     def crawl(self, debug=False):
         if not debug:
             resp = asyncio.run(self.load_page_helper(self.uri))
-            resp.html.arender(timeout=15)
+            resp.html.arender(timeout=30)
         else:
             # debug mode
             session = HTMLSession()
             resp = session.get(self.uri)
-            resp.html.render(timeout=15)
+            resp.html.render(timeout=30)
 
         cards = resp.html.find(self.cards_selector)[0]
         self.create_objs(cards)
