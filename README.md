@@ -101,7 +101,7 @@ def mk_result_iteratively(self):
 
 - **Result**
 
-  ![multiprocessing vs iterative](./_imgs_for_doc/multiprocessing vs iterative.png)
+  ![multiprocessing vs iterative](./_imgs_for_doc/multiprocessingVSiterative.png)
 
   - There was **no significant difference..** 😢
   - Why? Something wrong..?
