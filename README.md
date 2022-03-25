@@ -109,9 +109,11 @@ def mk_result_using_multiprocessing(self):
 - **Troubleshooting**
   - 문제 원인
     - `ray.get()`을 연속적으로 for문을 통해서 호출을 한 것. 
-    - 이렇게 연속적으로 `ray.get()`을 호출하게 되면, **나중에 호출된 `ray.get()`은 앞서 호출된 `ray.get()`의 작업이 끝날때 까지 기다림!!**
+    - 이렇게 연속적으로 `ray.get()`을 호출하게 되면, **나중에 호출된 `ray.get()`은 앞서 호출된 `ray.get()`의 작업이 끝날때 까지 기다리는 문제가 생겨버림**
+    - 즉, 병렬처리가 안되는 것.
   - 해결
-    - `[FUNCTION].remote()`를 순차적으로 호출하는 것이고! `ray.get()`은 한 번만 호출!
+    - `[FUNCTION].remote()`를 순차적으로 호출 
+    - `ray.get()`은 마지막에 한 번만 호출
 
 - **New Result**
 
