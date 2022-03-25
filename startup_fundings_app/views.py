@@ -14,7 +14,6 @@ def get_info_async(obj, platform, status=None) -> list:
         return obj.get_from_wadiz(status)
     if platform == 'ohmycompany':
         return obj.get_from_ohmycompany(status)
-    print(platform, status, "!!!!!!")
     raise Exception("Something Wrong!")
 
 
@@ -50,28 +49,26 @@ class ListView(APIView, StartupFundings):
 
     def mk_result_using_multiprocessing(self):
         start = time.time()
-
         ### do multiprocessing
         merged_info = []
         for platform in self.Platforms:
             merged_info.extend(ray.get(get_info_async.remote(ListView(), platform=platform, status=status)))
         ###
-
         end = time.time()
         print(f"실행 시간 : {end - start:.5f} sec", "!!!!!!!!!!!!!!!!!!!")
+
         return merged_info
 
     def mk_result_iteratively(self):
         start = time.time()
-
         ### do iteratively
         merged_info = []
         for platform in self.Platforms:
             merged_info.extend(self.get_info_directly(platform, status))
         ###
-
         end = time.time()
         print(f"{end - start:.5f} sec", "!!!!!!!!!!!!!!!!!!!")
+
         return merged_info
 
     def get(self, request):
