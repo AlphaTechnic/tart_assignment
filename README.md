@@ -67,22 +67,6 @@
 - Code iterative
 
 ```python
-def mk_result_using_multiprocessing(self):
-  start = time.time()
-  merged_info = []
-  for platform in self.Platforms:
-    merged_info.extend(ray.get(get_info_async.remote(ListView(), platform=platform, status=status)))
-  end = time.time()
-  print(f"실행 시간 : {end - start:.5f} sec", "!!!!!!!!!!!!!!!!!!!")
-  
-  return merged_info
-```
-
-
-
-- Code Multiprocessing
-
-```python
 def mk_result_iteratively(self):
   start = time.time()
   merged_info = []
@@ -91,6 +75,22 @@ def mk_result_iteratively(self):
   end = time.time()
   print(f"{end - start:.5f} sec", "!!!!!!!!!!!!!!!!!!!")
 
+  return merged_info
+```
+
+
+
+- Code Multiprocessing
+
+```python
+def mk_result_using_multiprocessing(self):
+  start = time.time()
+  merged_info = []
+  for platform in self.Platforms:
+    merged_info.extend(ray.get(get_info_async.remote(ListView(), platform=platform, status=status)))
+  end = time.time()
+  print(f"실행 시간 : {end - start:.5f} sec", "!!!!!!!!!!!!!!!!!!!")
+  
   return merged_info
 ```
 
