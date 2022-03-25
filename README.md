@@ -69,12 +69,9 @@
 ```python
 def mk_result_using_multiprocessing(self):
   start = time.time()
-
-  ### do multiprocessing
   merged_info = []
   for platform in self.Platforms:
     merged_info.extend(ray.get(get_info_async.remote(ListView(), platform=platform, status=status)))
-  ###
   end = time.time()
   print(f"실행 시간 : {end - start:.5f} sec", "!!!!!!!!!!!!!!!!!!!")
   
@@ -88,11 +85,9 @@ def mk_result_using_multiprocessing(self):
 ```python
 def mk_result_iteratively(self):
   start = time.time()
-  ### do iteratively
   merged_info = []
   for platform in self.Platforms:
     merged_info.extend(self.get_info_directly(platform, status))
-    ###
   end = time.time()
   print(f"{end - start:.5f} sec", "!!!!!!!!!!!!!!!!!!!")
 
