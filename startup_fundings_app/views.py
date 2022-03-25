@@ -4,14 +4,25 @@ from rest_framework.views import APIView
 import response_msg
 from startup_fundings_app.crawler.crawler import WadizCrawler, OhMyCompanyCrawler
 import startup_fundings_app.crawler.selector as sel
-# import ray
+import ray
+import time
 
-Platforms = ['wadiz', 'ohmycompany']
-Status = ['scheduled', 'open', 'closed']
-NumCPUs = 2
+
+@ray.remote
+def get_info_async(obj, platform, status=None) -> list:
+    if platform == 'wadiz':
+        return obj.get_from_wadiz(status)
+    if platform == 'ohmycompany':
+        return obj.get_from_ohmycompany(status)
+    print(platform, status, "!!!!!!")
+    raise Exception("Something Wrong!")
 
 
 class ListView(APIView):
+    Platforms = ['wadiz', 'ohmycompany']
+    Status = ['scheduled', 'open', 'closed']
+    NumCPUs = 2
+
     def get_from_wadiz(self, status) -> list:
         uri = "https://www.wadiz.kr/web/winvest/startup"
         crawler = WadizCrawler(uri, sel.wadiz_card_selector, sel.wadiz_company_selector, sel.wadiz_identifier_selector)
@@ -22,9 +33,7 @@ class ListView(APIView):
         crawler = OhMyCompanyCrawler(uri, sel.ohmycompany_card_selector)
         return crawler.crawl()
 
-    #@ray.remote
-    def get_info(self, platform, status) -> list:
-        # platform에서 정보가져와서 가져옴
+    def get_info_directly(self, platform, status) -> list:
         if platform == 'wadiz':
             return self.get_from_wadiz(status)
         if platform == 'ohmycompany':
@@ -32,11 +41,37 @@ class ListView(APIView):
         raise Exception("Something Wrong!")
 
     def validate_request(self, platform, status):
-        if platform is not None and platform not in Platforms:
+        if platform is not None and platform not in self.Platforms:
             return False
-        if status is not None and status not in Status:
+        if status is not None and status not in self.Status:
             return False
         return True
+
+    def mk_result_using_multiprocessing(self):
+        start = time.time()
+
+        ### do multiprocessing
+        merged_info = []
+        for platform in self.Platforms:
+            merged_info.extend(ray.get(get_info_async.remote(ListView(), platform=platform, status=status)))
+        ###
+
+        end = time.time()
+        print(f"실행 시간 : {end - start:.5f} sec", "!!!!!!!!!!!!!!!!!!!")
+        return merged_info
+
+    def mk_result_iteratively(self):
+        start = time.time()
+
+        ### do iteratively
+        merged_info = []
+        for platform in self.Platforms:
+            merged_info.extend(self.get_info_directly(platform, status))
+        ###
+
+        end = time.time()
+        print(f"{end - start:.5f} sec", "!!!!!!!!!!!!!!!!!!!")
+        return merged_info
 
     def get(self, request):
         platform = request.GET.get('platform')
@@ -48,31 +83,27 @@ class ListView(APIView):
 
         # platform 이 지정된 경우
         if platform is not None:
-            info = self.get_info(platform, status)
+            info = self.get_info_directly(platform, status)
             return Response(data=info)
 
         # platform 이 지정되지 않아서 모든 플랫폼을 불러오는 경우
+        # multiprocessing
+        # return Response(self.mk_result_using_multiprocessing())
 
-        # multiprocessing으로 ray를 사용하려 했으나 라이브러리 호환성 문제 ㅜ
-        # ray.init(num_cpus=NumCPUs)
-        # merged_info = []
-        # for platform in Platforms:
-        #     merged_info.extend(self.get_info.remote(platform, status))
-        # results = ray.get(merged_info)
-
-        merged_info = []
-        for platform in Platforms:
-            merged_info.extend(self.get_info(platform, status))
-
-        return Response(merged_info)
+        # NO multiprocessing
+        return Response(self.mk_result_iteratively())
 
 
 class InfoView(APIView):
+    Platforms = ['wadiz', 'ohmycompany']
+    Status = ['scheduled', 'open', 'closed']
+
     # 미완성 ㅜ
+
     def validate_request(self, platform):
-        if platform is not None and platform not in Platforms:
+        if platform is not None and platform not in self.Platforms:
             return False
-        if status is not None and status not in Status:
+        if status is not None and status not in self.Status:
             return False
         return True
 
